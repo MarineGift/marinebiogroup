@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarineBioGroup Admin Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #1e40af, #3b82f6); 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        .login-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo h1 {
+            color: #1e40af;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .logo p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .back-link a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link a:hover {
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>MarineBioGroup</h1>
+            <p>Admin Panel Login</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" value="admin" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" value="1111" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        
+        <div id="result" class="result"></div>
+        
+        <div class="back-link">
+            <a href="/">← Back to Website</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const result = document.getElementById('result');
+            
+            result.style.display = 'block';
+            result.className = 'result';
+            result.innerHTML = 'Logging in...';
+            
+            try {
+                // Try to connect to local development server first
+                let apiUrl = 'http://localhost:5000/api/admin/login';
+                
+                // If in production, try the production API endpoint
+                if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                    // For now, show message that backend is needed
+                    result.className = 'result error';
+                    result.innerHTML = `
+                        <strong>Backend Required</strong><br>
+                        This admin panel requires a backend server to function.<br>
+                        Please contact the administrator to set up the API server.<br><br>
+                        <small>Expected credentials: admin / 1111</small>
+                    `;
+                    return;
+                }
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminUser', JSON.stringify(data.user));
+                    result.className = 'result success';
+                    result.innerHTML = '<strong>Login successful!</strong><br>Redirecting to admin dashboard...';
+                    setTimeout(() => {
+                        window.location.href = 'admin-dashboard.html';
+                    }, 1500);
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = '<strong>Login failed:</strong><br>' + (data.error || 'Invalid credentials');
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `
+                    <strong>Connection Error</strong><br>
+                    Cannot connect to admin server.<br>
+                    Please ensure the backend is running on localhost:5000<br><br>
+                    <small>Error: ${error.message}</small>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

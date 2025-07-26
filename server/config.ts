@@ -23,7 +23,7 @@ export function getSiteConfig(): SiteConfig {
     domainName: process.env.DOMAIN_NAME || "marinebiogroup.com",
     companyName: process.env.COMPANY_NAME || "MarineBioGroup",
     supportEmail: process.env.SUPPORT_EMAIL || "support@marinebiogroup.com",
-    defaultLanguage: process.env.DEFAULT_LANGUAGE || "eng",
+    defaultLanguage: process.env.DEFAULT_LANGUAGE || "en",
     primaryColor: process.env.PRIMARY_COLOR || "#0EA5E9",
     secondaryColor: process.env.SECONDARY_COLOR || "#10B981",
     accentColor: process.env.ACCENT_COLOR || "#F59E0B",
@@ -36,11 +36,11 @@ export function getSiteConfig(): SiteConfig {
 
 // Language mapping - English only
 export const LANGUAGE_CODES = {
-  english: "eng"
+  english: "en"
 } as const;
 
 export const LANGUAGE_NAMES = {
-  eng: "English"
+  en: "English"
 } as const;
 
 // Language display mapping

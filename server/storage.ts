@@ -20,23 +20,25 @@ import {
 import { eq, and, desc, count, like } from "drizzle-orm";
 import { siteConfig } from "./config";
 
-// Database connection with fallback for development
-let db: any;
-try {
-  if (process.env.DATABASE_URL) {
-    console.log("Connecting to database...");
-    const sql = neon(process.env.DATABASE_URL);
-    db = drizzle(sql, {
-      schema: { users, contacts, newsletters, blog_posts, news, gallery, products, carousel, admin_sessions }
+// Supabase PostgreSQL connection (temporarily disabled due to compatibility issues)
+let db: any = null;
+// Database connection with proper error handling
+if (process.env.DATABASE_URL) {
+  try {
+    console.log("Initializing Supabase database connection...");
+    import('./db.js').then(({ db: database }) => {
+      db = database;
+      console.log("✅ Supabase database connected successfully");
+    }).catch(error => {
+      console.error("❌ Database import error:", error.message);
+      console.log("Using memory storage as fallback");
     });
-    console.log("Database connected successfully");
-  } else {
-    console.warn("DATABASE_URL not configured, using memory storage fallback");
-    db = null;
+  } catch (error) {
+    console.error("❌ Database connection error:", error);
+    console.log("Using memory storage as fallback");
   }
-} catch (error) {
-  console.error("Database connection error:", error);
-  db = null;
+} else {
+  console.log("DATABASE_URL not found, using memory storage");
 }
 
 export interface IStorage {
@@ -164,7 +166,7 @@ export class DatabaseStorage implements IStorage {
         content: "Our research team has achieved a significant breakthrough in marine nano-fiber technology that promises to revolutionize the sustainable materials industry...",
         category: "Technology Update",
         imageUrl: "https://images.unsplash.com/photo-1576086213369-97a306d36557?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-        language: "eng",
+        language: "en",
         status: "published",
         authorId: null,
         site: siteName,
@@ -179,7 +181,7 @@ export class DatabaseStorage implements IStorage {
         content: "We are proud to announce that MarineBioGroup has received official government recognition from the Ministry of Trade, Industry, and Energy...",
         category: "Company News",
         imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-        language: "eng",
+        language: "en",
         status: "published",
         authorId: null,
         site: siteName,
@@ -194,7 +196,7 @@ export class DatabaseStorage implements IStorage {
         content: "MarineBioGroup is committed to supporting the UN Sustainable Development Goals, particularly SDG 14 (Life Below Water) and SDG 8 (Decent Work and Economic Growth)...",
         category: "Sustainability",
         imageUrl: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
-        language: "eng",
+        language: "en",
         status: "published",
         authorId: null,
         site: siteName,
@@ -243,7 +245,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=400&q=80",
         category: "Research",
         tags: ["laboratory", "research", "technology"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -258,7 +260,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=400&q=80",
         category: "Environment",
         tags: ["ocean", "sustainability", "environment"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -273,7 +275,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?auto=format&fit=crop&w=400&q=80",
         category: "Products",
         tags: ["skincare", "beauty", "products"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -288,7 +290,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80",
         category: "Research",
         tags: ["research", "team", "underwater"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -303,7 +305,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=400&q=80",
         category: "Manufacturing",
         tags: ["manufacturing", "processing", "facility"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -318,7 +320,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&w=400&q=80",
         category: "Research",
         tags: ["ecosystem", "marine", "study"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -333,7 +335,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=400&q=80",
         category: "Events",
         tags: ["conference", "presentation", "CEO"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -348,7 +350,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=400&q=80",
         category: "Quality",
         tags: ["quality", "testing", "laboratory"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -363,7 +365,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=400&q=80",
         category: "Products",
         tags: ["packaging", "sustainable", "eco-friendly"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -378,7 +380,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=400&q=80",
         category: "Research",
         tags: ["vessel", "deep-sea", "exploration"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -393,7 +395,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1556909411-f309d7c6b9f0?auto=format&fit=crop&w=400&q=80",
         category: "Products",
         tags: ["cream", "production", "skincare"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -408,7 +410,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80",
         category: "Company",
         tags: ["headquarters", "building", "corporate"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -423,7 +425,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80",
         category: "Education",
         tags: ["workshop", "education", "biotechnology"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -438,7 +440,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=400&q=80",
         category: "Awards",
         tags: ["award", "recognition", "ceremony"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -453,7 +455,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=400&q=80",
         category: "Products",
         tags: ["marine-pack", "packaging", "biodegradable"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -468,7 +470,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&w=400&q=80",
         category: "Conservation",
         tags: ["coral", "conservation", "partnership"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -483,7 +485,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=400&q=80",
         category: "Technology",
         tags: ["clean-energy", "solar", "manufacturing"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -498,7 +500,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=400&q=80",
         category: "Logistics",
         tags: ["distribution", "global", "logistics"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -513,7 +515,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&q=80",
         category: "Customer",
         tags: ["customer", "experience", "interactive"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -528,7 +530,7 @@ export class DatabaseStorage implements IStorage {
         thumbnailUrl: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=400&q=80",
         category: "Events",
         tags: ["summit", "innovation", "2024"],
-        language: "eng" as Language,
+        language: "en" as Language,
         status: "published" as const,
         authorId: null,
         site: siteName,
@@ -596,7 +598,7 @@ export class DatabaseStorage implements IStorage {
         category: "Sun Protection",
         tags: ["sunscreen", "UV protection", "cooling", "seaweed"],
         language: "en" as Language,
-        status: "development" as const,
+        status: "published" as const,
         stock: 0,
         sku: "MSP-001",
         weight: 75,
@@ -616,7 +618,7 @@ export class DatabaseStorage implements IStorage {
         category: "Hygiene",
         tags: ["biodegradable", "microplastic-free", "bio-polymer", "sustainable"],
         language: "en" as Language,
-        status: "coming-soon" as const,
+        status: "published" as const,
         stock: 0,
         sku: "MPD-001",
         weight: 200,
@@ -953,7 +955,7 @@ export class DatabaseStorage implements IStorage {
     const contact: Contact = {
       id: randomUUID(),
       ...insertContact,
-      language: insertContact.language || "eng",
+      language: insertContact.language || "en",
       site: insertContact.site || siteName,
       createdAt: new Date()
     };
@@ -999,7 +1001,7 @@ export class DatabaseStorage implements IStorage {
     const newsletter: Newsletter = {
       id: randomUUID(),
       ...insertNewsletter,
-      language: insertNewsletter.language || "eng",
+      language: insertNewsletter.language || "en",
       site: insertNewsletter.site || siteName,
       subscribedAt: new Date()
     };
@@ -1082,7 +1084,7 @@ export class DatabaseStorage implements IStorage {
     const blogPost: BlogPost = {
       id: randomUUID(),
       ...insertBlogPost,
-      language: insertBlogPost.language || "eng",
+      language: insertBlogPost.language || "en",
       status: insertBlogPost.status || "published",
       site: insertBlogPost.site || siteName,
       publishedAt: new Date(),
@@ -1183,7 +1185,7 @@ export class DatabaseStorage implements IStorage {
     const news: News = {
       id: randomUUID(),
       ...insertNews,
-      language: insertNews.language || "eng",
+      language: insertNews.language || "en",
       status: insertNews.status || "published",
       site: insertNews.site || siteName,
       publishedAt: new Date(),
@@ -1281,64 +1283,37 @@ export class DatabaseStorage implements IStorage {
   // Gallery operations
   async createGalleryItem(insertGallery: InsertGallery): Promise<Gallery> {
     const siteName = siteConfig.siteName;
-    const gallery: Gallery = {
+    const galleryItem: Gallery = {
       id: randomUUID(),
       ...insertGallery,
-      language: insertGallery.language || "eng",
+      language: insertGallery.language || "en",
       status: insertGallery.status || "published",
       site: insertGallery.site || siteName,
       createdAt: new Date(),
       updatedAt: new Date()
     };
 
-    if (db) {
-      try {
-        const result = await db.insert(gallery).values(gallery).returning();
-        return result[0];
-      } catch (error) {
-        console.error("Error creating gallery item:", error);
-      }
-    }
-    
-    this.memoryGallery.set(gallery.id, gallery);
-    return gallery;
+    // Use memory storage only (database disabled due to compatibility issues)
+    this.memoryGallery.set(galleryItem.id, galleryItem);
+    return galleryItem;
   }
 
   async getGalleryItems(language?: string, page: number = 1, limit: number = 12): Promise<{ data: Gallery[], total: number }> {
-    if (db) {
-      try {
-        let query = db.select().from(gallery);
-        if (language) {
-          query = query.where(eq(gallery.language, language));
-        }
-        const result = await query;
-        const total = result.length;
-        const offset = (page - 1) * limit;
-        const data = result.slice(offset, offset + limit);
-        return { data, total };
-      } catch (error) {
-        console.error("Error getting gallery items:", error);
-      }
-    }
-    
+    // Use memory storage only (database disabled due to compatibility issues)
     const allItems = Array.from(this.memoryGallery.values());
     const filteredItems = language ? allItems.filter(item => item.language === language) : allItems;
     const total = filteredItems.length;
     const offset = (page - 1) * limit;
-    const data = filteredItems.slice(offset, offset + limit);
+    const data = filteredItems
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(offset, offset + limit);
+    
+    console.log(`Memory gallery query: ${data.length} items, total: ${total}`);
     return { data, total };
   }
 
   async getGalleryItem(id: string): Promise<Gallery | undefined> {
-    if (db) {
-      try {
-        const result = await db.select().from(gallery).where(eq(gallery.id, id));
-        return result[0];
-      } catch (error) {
-        console.error("Error getting gallery item:", error);
-      }
-    }
-    
+    // Use memory storage only (database disabled due to compatibility issues)
     return this.memoryGallery.get(id);
   }
 
@@ -1384,7 +1359,7 @@ export class DatabaseStorage implements IStorage {
     const product: Product = {
       id: randomUUID(),
       ...insertProduct,
-      language: insertProduct.language || "eng",
+      language: insertProduct.language || "en",
       status: insertProduct.status || "published",
       stock: insertProduct.stock || 0,
       site: insertProduct.site || siteName,
@@ -1532,7 +1507,7 @@ export class DatabaseStorage implements IStorage {
       ...carouselData,
       order: carouselData.order || 0,
       isActive: carouselData.isActive !== undefined ? carouselData.isActive : true,
-      language: carouselData.language || "eng",
+      language: carouselData.language || "en",
       site: carouselData.site || siteName,
       createdAt: new Date(),
       updatedAt: new Date()
@@ -1733,7 +1708,7 @@ async function initializeSampleCarousels() {
       buttonText: "Learn More",
       order: 1,
       isActive: true,
-      language: "eng" as Language
+      language: "en" as Language
     },
     {
       title: "해양 나노 섬유 기술",
@@ -1744,7 +1719,7 @@ async function initializeSampleCarousels() {
       buttonText: "자세히 보기",
       order: 1,
       isActive: true,
-      language: "kor" as Language
+      language: "ko" as Language
     },
     {
       title: "Innovative Marine Products",
@@ -1755,7 +1730,7 @@ async function initializeSampleCarousels() {
       buttonText: "View Products",
       order: 2,
       isActive: true,
-      language: "eng" as Language
+      language: "en" as Language
     },
     {
       title: "혁신적인 해양 제품",
@@ -1766,7 +1741,7 @@ async function initializeSampleCarousels() {
       buttonText: "제품 보기",
       order: 2,
       isActive: true,
-      language: "kor" as Language
+      language: "ko" as Language
     },
     {
       title: "Global Partnership Network",
@@ -1777,7 +1752,7 @@ async function initializeSampleCarousels() {
       buttonText: "Partner With Us",
       order: 3,
       isActive: true,
-      language: "eng" as Language
+      language: "en" as Language
     }
   ];
 

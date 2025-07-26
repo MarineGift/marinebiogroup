@@ -1,13 +1,13 @@
 [build]
-  publish = "dist/public"
+  publish = "client/dist"
   command = "npm run build"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_ENV = "production"
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
+  to = "/.netlify/functions/server/:splat"
   status = 200
 
 [[redirects]]
@@ -16,9 +16,4 @@
   status = 200
 
 [functions]
-  directory = "netlify/functions"
-
-[dev]
-  command = "npm run dev"
-  port = 5000
-  publish = "dist/public"
+  node_bundler = "esbuild"

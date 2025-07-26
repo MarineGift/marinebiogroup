@@ -26,8 +26,8 @@ export const sessions = pgTable(
 );
 
 // Language enum
-export const languageEnum = pgEnum("language", ["eng", "kor", "jpn", "esp"]);
-export type Language = "eng" | "kor" | "jpn" | "esp";
+export const languageEnum = pgEnum("language", ["en", "ko", "ja", "es"]);
+export type Language = "en" | "ko" | "ja" | "es";
 
 // Status enum  
 export const statusEnum = pgEnum("status", ["draft", "published", "archived"]);
@@ -57,7 +57,7 @@ export const contacts = pgTable("contacts", {
   email: varchar("email", { length: 255 }).notNull(),
   inquiryType: varchar("inquiry_type", { length: 50 }).notNull(),
   message: text("message").notNull(),
-  language: languageEnum("language").default("eng"),
+  language: languageEnum("language").default("en"),
   site: varchar("site").default("marinebiogroup"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -66,7 +66,7 @@ export const contacts = pgTable("contacts", {
 export const newsletters = pgTable("newsletters", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email", { length: 255 }).notNull(),
-  language: languageEnum("language").default("eng"),
+  language: languageEnum("language").default("en"),
   site: varchar("site").default("marinebiogroup"),
   subscribedAt: timestamp("subscribed_at").defaultNow(),
 });
@@ -79,7 +79,7 @@ export const blog_posts = pgTable("blog_posts", {
   content: text("content").notNull(),
   category: varchar("category", { length: 100 }),
   imageUrl: varchar("image_url", { length: 500 }),
-  language: languageEnum("language").default("eng"),
+  language: languageEnum("language").default("en"),
   status: statusEnum("status").default("published"),
   authorId: varchar("author_id"),
   site: varchar("site").default("marinebiogroup"),
@@ -96,7 +96,7 @@ export const news = pgTable("news", {
   content: text("content").notNull(),
   category: varchar("category", { length: 100 }),
   imageUrl: varchar("image_url", { length: 500 }),
-  language: languageEnum("language").default("eng"),
+  language: languageEnum("language").default("en"),
   status: statusEnum("status").default("published"),
   authorId: varchar("author_id"),
   site: varchar("site").default("marinebiogroup"),
@@ -114,7 +114,7 @@ export const gallery = pgTable("gallery", {
   thumbnailUrl: varchar("thumbnail_url", { length: 500 }),
   category: varchar("category", { length: 100 }),
   tags: jsonb("tags"),
-  language: languageEnum("language").default("eng"),
+  language: languageEnum("language").default("en"),
   status: statusEnum("status").default("published"),
   authorId: varchar("author_id"),
   site: varchar("site").default("marinebiogroup"),
@@ -133,7 +133,7 @@ export const products = pgTable("products", {
   images: jsonb("images"), // Array of image URLs
   category: varchar("category", { length: 100 }),
   tags: jsonb("tags"), // Array of tags
-  language: languageEnum("language").default("eng"),
+  language: languageEnum("language").default("en"),
   status: statusEnum("status").default("published"),
   stock: integer("stock").default(0),
   sku: varchar("sku", { length: 100 }),
@@ -165,7 +165,7 @@ export const carousel = pgTable("carousel", {
   buttonText: varchar("button_text", { length: 100 }),
   order: integer("order").default(0),
   isActive: boolean("is_active").default(true),
-  language: languageEnum("language").default("eng"),
+  language: languageEnum("language").default("en"),
   site: varchar("site").default("marinebiogroup"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

@@ -27,7 +27,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const contactData = req.body as InsertContact;
       // Add language from request or use site default
-      const language = req.body.language || siteConfig.defaultLanguage;
+      const language = req.body.language || "en";
       const contact = await storage.createContact({
         ...contactData,
         language
@@ -43,7 +43,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const newsletterData = req.body as InsertNewsletter;
       // Add language from request or use site default
-      const language = req.body.language || siteConfig.defaultLanguage;
+      const language = req.body.language || "en";
       const subscription = await storage.createNewsletterSubscription({
         ...newsletterData,
         language
@@ -140,7 +140,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get blog posts with pagination
   app.get("/api/blog", async (req, res) => {
     try {
-      const language = req.query.language as string || siteConfig.defaultLanguage;
+      const language = req.query.language as string || "en";
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const result = await storage.getBlogPosts(language, page, limit);
@@ -202,7 +202,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // News routes with pagination
   app.get("/api/news", async (req, res) => {
     try {
-      const language = req.query.language as string || siteConfig.defaultLanguage;
+      const language = req.query.language as string || "en";
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const result = await storage.getNews(language, page, limit);
@@ -263,7 +263,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Gallery routes with pagination
   app.get("/api/gallery", async (req, res) => {
     try {
-      const language = req.query.language as string || siteConfig.defaultLanguage;
+      const language = req.query.language as string || "en";
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 12;
       const result = await storage.getGalleryItems(language, page, limit);
@@ -324,7 +324,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Products routes
   app.get("/api/products", async (req, res) => {
     try {
-      const language = req.query.language as string || siteConfig.defaultLanguage;
+      const language = req.query.language as string || "en";
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const result = await storage.getProducts(language, page, limit);
@@ -570,7 +570,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Carousel public routes
   app.get("/api/carousels", async (req, res) => {
     try {
-      const language = req.query.language as string || siteConfig.defaultLanguage;
+      const language = req.query.language as string || "en";
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const result = await storage.getCarousels(language, page, limit);
@@ -582,7 +582,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/carousels/active", async (req, res) => {
     try {
-      const language = req.query.language as string || siteConfig.defaultLanguage;
+      const language = req.query.language as string || "en";
       const carousels = await storage.getActiveCarousels(language);
       res.json(carousels);
     } catch (error: any) {

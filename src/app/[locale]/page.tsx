@@ -1,0 +1,1 @@
+// Home page component placeholder for [locale] route

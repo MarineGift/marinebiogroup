@@ -1,8 +1,10 @@
-const path = require("path");
+const createNextIntlPlugin = require('next-intl/plugin');
 
-module.exports = {
-  webpack: (config) => {
-    config.resolve.alias["@"] = path.resolve(__dirname, "src");
-    return config;
-  }
+const withNextIntl = createNextIntlPlugin();
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
 };
+
+module.exports = withNextIntl(nextConfig);

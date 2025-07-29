@@ -1,0 +1,1 @@
+// Layout component placeholder for multilingual support

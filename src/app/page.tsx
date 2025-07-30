@@ -1,8 +1,10 @@
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 
-export default function HomePage() {
-  const t = useTranslations('home')
+export default function LocalizedHomePage() {
+  return <div>Localized Page</div>;
+}
+
 
   return (
     <div className="min-h-screen bg-gray-50">

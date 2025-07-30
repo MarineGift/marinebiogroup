@@ -1,30 +1,35 @@
-{
-  "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "es6"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts", 
-    "**/*.tsx", 
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
-}
+# 기존 파일 삭제
+rm tsconfig.json
+
+# 새 파일 생성 (한 줄씩)
+echo '{' > tsconfig.json
+echo '  "compilerOptions": {' >> tsconfig.json
+echo '    "target": "es5",' >> tsconfig.json
+echo '    "lib": ["dom", "dom.iterable", "es6"],' >> tsconfig.json
+echo '    "allowJs": true,' >> tsconfig.json
+echo '    "skipLibCheck": true,' >> tsconfig.json
+echo '    "strict": true,' >> tsconfig.json
+echo '    "forceConsistentCasingInFileNames": true,' >> tsconfig.json
+echo '    "noEmit": true,' >> tsconfig.json
+echo '    "esModuleInterop": true,' >> tsconfig.json
+echo '    "module": "esnext",' >> tsconfig.json
+echo '    "moduleResolution": "node",' >> tsconfig.json
+echo '    "resolveJsonModule": true,' >> tsconfig.json
+echo '    "isolatedModules": true,' >> tsconfig.json
+echo '    "jsx": "preserve",' >> tsconfig.json
+echo '    "incremental": true,' >> tsconfig.json
+echo '    "plugins": [' >> tsconfig.json
+echo '      {' >> tsconfig.json
+echo '        "name": "next"' >> tsconfig.json
+echo '      }' >> tsconfig.json
+echo '    ]' >> tsconfig.json
+echo '  },' >> tsconfig.json
+echo '  "include": [' >> tsconfig.json
+echo '    "next-env.d.ts",' >> tsconfig.json
+echo '    "**/*.ts",' >> tsconfig.json
+echo '    "**/*.tsx"' >> tsconfig.json
+echo '  ],' >> tsconfig.json
+echo '  "exclude": [' >> tsconfig.json
+echo '    "node_modules"' >> tsconfig.json
+echo '  ]' >> tsconfig.json
+echo '}' >> tsconfig.json

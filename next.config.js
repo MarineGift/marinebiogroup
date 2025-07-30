@@ -1,20 +1,13 @@
-cat > next.config.js << 'EOF'
-const createNextIntlPlugin = require('next-intl/plugin')
-
-const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  reactStrictMode: true,
   images: {
-    domains: ['your-supabase-url.supabase.co'],
+    domains: ['your-supabase-bucket-url.com'], // 필요에 따라 수정
   },
-}
+  i18n: {
+    locales: ['en', 'ko'],
+    defaultLocale: 'en',
+  },
+};
 
-module.exports = withNextIntl(nextConfig)
-EOF
+module.exports = nextConfig;

@@ -1,15 +1,12 @@
-import { getRequestConfig } from 'next-intl/server'
-import { notFound } from 'next/navigation'
+const createNextIntlPlugin = require('next-intl/plugin')
 
-// 지원하는 언어 목록
-export const locales = ['en', 'ko'] as const
-export type Locale = (typeof locales)[number]
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
-export default getRequestConfig(async ({ locale }) => {
-  // 지원하지 않는 언어인 경우 404 처리
-  if (!locales.includes(locale as Locale)) notFound()
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    domains: ['your-supabase-url.supabase.co'], // Supabase 이미지 도메인 추가
+  },
+}
 
-  return {
-    messages: (await import(`@/locales/${locale}.json`)).default
-  }
-})
+module.exports = withNextIntl(nextConfig)

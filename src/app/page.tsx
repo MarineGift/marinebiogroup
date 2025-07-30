@@ -3,19 +3,15 @@
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-export default function LocaleHomePage() {
+export default function LocalePage() {
   const t = useTranslations();
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            {t('title')}
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            {t('description')}
-          </p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('title')}</h1>
+          <p className="text-xl text-gray-600 mb-8">{t('description')}</p>
           <div className="space-x-4">
             <Link
               href="/login"

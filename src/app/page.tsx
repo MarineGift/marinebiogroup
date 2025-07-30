@@ -1,8 +1,8 @@
-import { useTranslations } from 'next-intl'
-import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
-export default function LocalizedHomePage() {
-  return <div>Localized Page</div>;
+export default function RootPage() {
+  // 기본 언어로 리다이렉트
+  redirect('/en')
 }
 
 

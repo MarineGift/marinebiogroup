@@ -1,17 +1,29 @@
-import createMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware'
+import { locales } from './i18n/request'
 
 export default createMiddleware({
   // 지원하는 언어 목록
-  locales: ['ko', 'en', 'ja', 'es'],
+  locales,
   
   // 기본 언어
-  defaultLocale: 'ko',
+  defaultLocale: 'en',
   
-  // URL에서 기본 언어 숨기기
-  localePrefix: 'as-needed'
-});
+  // 언어 감지 방식
+  localeDetection: true
+})
 
 export const config = {
-  // 국제화가 적용될 경로 패턴
-  matcher: ['/', '/(ko|en|ja|es)/:path*']
-};
+  // '/api', '/_next', '/_vercel' 경로는 제외
+  matcher: [
+    // Enable a redirect to a matching locale at the root
+    '/',
+    
+    // Set a cookie to remember the previous locale for
+    // all requests that have a locale prefix
+    '/(ko|en)/:path*',
+    
+    // Enable redirects that add missing locales
+    // (e.g. `/pathnames` -> `/en/pathnames`)
+    '/((?!api|_next|_vercel|.*\\..*).*)'
+  ]
+}

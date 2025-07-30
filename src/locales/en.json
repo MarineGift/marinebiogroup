@@ -1,6 +1,20 @@
 {
-  "HomePage": {
-    "services": "Services",
-    "gallery": "Gallery"
+  "common": {
+    "login": "Login",
+    "logout": "Logout",
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "login": {
+    "title": "Login to MarineBioGroup",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "home": {
+    "title": "Welcome to MarineBioGroup",
+    "description": "Advancing marine biology research"
   }
 }

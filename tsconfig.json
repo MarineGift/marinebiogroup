@@ -20,6 +20,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
+      "@/*": ["src/*"]
       "@/*": ["client/src/*"],
       "@/components/*": ["client/src/components/*"],
       "@/lib/*": ["client/src/lib/*"],

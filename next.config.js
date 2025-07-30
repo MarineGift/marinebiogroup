@@ -1,23 +1,9 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  webpack: (config, { dev, isServer }) => {
-    config.plugins = config.plugins.filter((plugin) => {
-      return ![
-        'ForkTsCheckerWebpackPlugin',
-        'TypeScriptCheckerPlugin'
-      ].includes(plugin.constructor.name)
-    })
-    return config
-  },
-  images: {
-    domains: ['your-supabase-url.supabase.co'],
-  },
-}
+// next.config.js
+const createNextIntlPlugin = require('next-intl/plugin');
 
-module.exports = nextConfig
+const withNextIntl = createNextIntlPlugin();
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+module.exports = withNextIntl(nextConfig);

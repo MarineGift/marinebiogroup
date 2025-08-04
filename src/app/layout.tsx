@@ -1,5 +1,6 @@
 // src/app/layout.tsx
 import { Toaster } from 'react-hot-toast';
+import { LanguageProvider } from '@/hooks/useLanguage';
 
 export default function RootLayout({
   children,
@@ -9,7 +10,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
         <Toaster
           position="top-right"
           toastOptions={{

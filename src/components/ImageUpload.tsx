@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { useToast } from "@/hooks/use-toast";
+import toast from 'react-hot-toast';
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 

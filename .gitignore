@@ -1,7 +1,0 @@
-node_modules
-dist
-.DS_Store
-server/public
-nixpacks.toml*
-vite.config.ts.*
-*.tar.gz

@@ -23,24 +23,16 @@ export default function ImageUpload({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
+  // const { toast } = useToast(); // 이 줄 제거!
 
   const handleFileSelect = async (file: File) => {
     if (!file.type.startsWith('image/')) {
-      toast({
-        title: "Invalid file type",
-        description: "Please select an image file",
-        variant: "destructive",
-      });
+      toast.error("Please select an image file"); // react-hot-toast 방식
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      toast({
-        title: "File too large",
-        description: "Please select an image smaller than 5MB",
-        variant: "destructive",
-      });
+      toast.error("Please select an image smaller than 5MB"); // react-hot-toast 방식
       return;
     }
 
@@ -76,10 +68,7 @@ export default function ImageUpload({
         setIsUploading(false);
         setUploadProgress(0);
         
-        toast({
-          title: "Local file selected",
-          description: `${file.name} ready for use in ${category} section`,
-        });
+        toast.success(`${file.name} ready for use in ${category} section`); // react-hot-toast 방식
       }, 500);
 
     } catch (error) {
@@ -87,11 +76,7 @@ export default function ImageUpload({
       setIsUploading(false);
       setUploadProgress(0);
       
-      toast({
-        title: "Upload failed",
-        description: "Failed to upload image. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to upload image. Please try again."); // react-hot-toast 방식
     }
   };
 

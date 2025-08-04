@@ -1,10 +1,26 @@
-import { redirect } from 'next/navigation'
+// src/app/layout.tsx
+import { Toaster } from 'react-hot-toast';
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  // 기본 언어로 리다이렉트
-  redirect('/en')
+  return (
+    <html lang="ko">
+      <body>
+        {children}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+          }}
+        />
+      </body>
+    </html>
+  );
 }

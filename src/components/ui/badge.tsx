@@ -1,8 +1,9 @@
+// src/components/ui/badge.tsx
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-// ✅ Badge 스타일 정의
+// Tailwind 기반 variant 스타일 정의
 const badgeVariants = cva(
   "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
@@ -20,22 +21,19 @@ const badgeVariants = cva(
   }
 );
 
-// ✅ 타입 정의: variant 포함
+// ✅ BadgeProps에 variant 타입 추가
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {}
 
-// ✅ React.forwardRef 적용
 const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
-  ({ className, variant, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn(badgeVariants({ variant }), className)}
-        {...props}
-      />
-    );
-  }
+  ({ className, variant, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(badgeVariants({ variant }), className)}
+      {...props}
+    />
+  )
 );
 Badge.displayName = "Badge";
 

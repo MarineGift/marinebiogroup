@@ -1,6 +1,7 @@
-"use client"; // 이 줄 추가!
+cat > src/hooks/useLanguage.ts << 'EOF'
+"use client";
 
-import { useState } from 'react';
+import { useState, useContext, createContext, ReactNode } from 'react';
 
 export type Language = 'ko' | 'eng';
 
@@ -9,11 +10,30 @@ export const LANGUAGE_NAMES = {
   eng: 'English'
 } as const;
 
-export function useLanguage() {
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>('ko');
 
-  return {
-    language,
-    setLanguage
-  };
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage }}>
+      {children}
+    </LanguageContext.Provider>
+  );
 }
+
+export function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    // Context 없어도 기본값 반환 (더 안전)
+    const [language, setLanguage] = useState<Language>('ko');
+    return { language, setLanguage };
+  }
+  return context;
+}
+EOF

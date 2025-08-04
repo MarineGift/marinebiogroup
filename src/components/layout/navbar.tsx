@@ -1,123 +1,174 @@
+"use client";
+
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Menu, Waves, Globe, ChevronDown } from "lucide-react";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useSiteConfig } from "@/hooks/useSiteConfig";
+import { Menu, X, Waves, ChevronDown } from "lucide-react";
 
-const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About Us" },
-  { href: "/technology", label: "Technology" },
-  { href: "/products", label: "Products" },
-  { href: "/market", label: "Market" },
-  { href: "/investors", label: "Investors" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/news", label: "News" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
-  { href: "/admin", label: "Admin" },
-];
-
-const languages = [
-  { code: "eng", name: "English", flag: "🇺🇸" },
-
+const navigation = [
+  { name: "Home", href: "/" },
+  { 
+    name: "About", 
+    href: "/about",
+    submenu: [
+      { name: "Company", href: "/about/company" },
+      { name: "Team", href: "/about/team" },
+      { name: "History", href: "/about/history" }
+    ]
+  },
+  { 
+    name: "Products", 
+    href: "/products",
+    submenu: [
+      { name: "Nano-Fiber Solutions", href: "/products/nano-fiber" },
+      { name: "Marine Technology", href: "/products/marine-tech" },
+      { name: "Biotechnology", href: "/products/biotech" }
+    ]
+  },
+  { name: "Research", href: "/research" },
+  { name: "News", href: "/news" },
+  { name: "Contact", href: "/contact" }
 ];
 
 export default function Navbar() {
-  const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const { language, setLanguage, getLanguageName } = useLanguage();
-  const { data: siteConfig } = useSiteConfig();
-  
-  const companyName = siteConfig?.companyName || "MarineBioGroup";
-  
-  const handleLanguageChange = (langCode: string) => {
-    setLanguage(langCode);
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(href);
   };
 
-  const currentLang = languages.find(lang => lang.code === language);
-
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+    <nav className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
-              <Waves className="text-white h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">{companyName}</h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Marine Nano Fiber Pioneer</p>
-            </div>
-          </Link>
-          
-          <div className="hidden lg:flex items-center space-x-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`transition-colors ${
-                  location === item.href
-                    ? "text-blue-600 dark:text-blue-400 font-medium"
-                    : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-            
-            {/* Language Selector */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-1">
-                  <Globe className="w-4 h-4" />
-                  <span className="text-sm">{currentLang?.flag} {currentLang?.name}</span>
-                  <ChevronDown className="w-3 h-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {languages.map((lang) => (
-                  <DropdownMenuItem
-                    key={lang.code}
-                    onClick={() => handleLanguageChange(lang.code)}
-                    className={language === lang.code ? "bg-blue-50 dark:bg-blue-900/20" : ""}
-                  >
-                    <span className="mr-2">{lang.flag}</span>
-                    {lang.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center">
+              <Waves className="h-8 w-8 text-blue-600 mr-2" />
+              <span className="text-xl font-bold text-gray-900">MarineBioGroup</span>
+            </Link>
           </div>
-          
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col space-y-4 mt-8">
-                {navItems.map((item) => (
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              {navigation.map((item) => (
+                item.submenu ? (
+                  <DropdownMenu key={item.name}>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        className={`flex items-center ${
+                          isActive(item.href)
+                            ? "text-blue-600 bg-blue-50"
+                            : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        {item.name}
+                        <ChevronDown className="ml-1 h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {item.submenu.map((subItem) => (
+                        <DropdownMenuItem key={subItem.name} asChild>
+                          <Link
+                            href={subItem.href}
+                            className={`block px-4 py-2 text-sm ${
+                              isActive(subItem.href)
+                                ? "text-blue-600 bg-blue-50"
+                                : "text-gray-700 hover:text-blue-600"
+                            }`}
+                          >
+                            {subItem.name}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
                   <Link
-                    key={item.href}
+                    key={item.name}
                     href={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`text-lg transition-colors ${
-                      location === item.href
-                        ? "text-blue-600 font-medium"
-                        : "text-gray-700 hover:text-blue-600"
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive(item.href)
+                        ? "text-blue-600 bg-blue-50"
+                        : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                     }`}
                   >
-                    {item.label}
+                    {item.name}
                   </Link>
-                ))}
-              </div>
-            </SheetContent>
-          </Sheet>
+                )
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-80">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center">
+                    <Waves className="h-8 w-8 text-blue-600 mr-2" />
+                    <span className="text-xl font-bold text-gray-900">MarineBioGroup</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  {navigation.map((item) => (
+                    <div key={item.name}>
+                      {item.submenu ? (
+                        <div>
+                          <div className="text-lg font-medium text-gray-900 mb-2">
+                            {item.name}
+                          </div>
+                          <div className="ml-4 space-y-2">
+                            {item.submenu.map((subItem) => (
+                              <Link
+                                key={subItem.name}
+                                href={subItem.href}
+                                className={`block py-2 text-base ${
+                                  isActive(subItem.href)
+                                    ? "text-blue-600 font-medium"
+                                    : "text-gray-700 hover:text-blue-600"
+                                }`}
+                                onClick={() => setIsOpen(false)}
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          className={`block py-2 text-lg font-medium ${
+                            isActive(item.href)
+                              ? "text-blue-600"
+                              : "text-gray-900 hover:text-blue-600"
+                          }`}
+                          onClick={() => setIsOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </nav>

@@ -19,7 +19,6 @@ const badgeVariants = cva(
   }
 );
 
-// ✅ VariantProps를 반드시 포함시켜야 variant 타입이 생김
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {}
@@ -33,6 +32,7 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
     />
   )
 );
+
 Badge.displayName = "Badge";
 
 export { Badge, badgeVariants };

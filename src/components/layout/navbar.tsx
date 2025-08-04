@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+// import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"; // 제거
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Menu, X, Waves, ChevronDown } from "lucide-react";
 
@@ -111,65 +111,62 @@ export default function Navbar() {
 
           {/* Mobile menu button */}
           <div className="md:hidden">
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-80">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center">
-                    <Waves className="h-8 w-8 text-blue-600 mr-2" />
-                    <span className="text-xl font-bold text-gray-900">MarineBioGroup</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  {navigation.map((item) => (
-                    <div key={item.name}>
-                      {item.submenu ? (
-                        <div>
-                          <div className="text-lg font-medium text-gray-900 mb-2">
-                            {item.name}
-                          </div>
-                          <div className="ml-4 space-y-2">
-                            {item.submenu.map((subItem) => (
-                              <Link
-                                key={subItem.name}
-                                href={subItem.href}
-                                className={`block py-2 text-base ${
-                                  isActive(subItem.href)
-                                    ? "text-blue-600 font-medium"
-                                    : "text-gray-700 hover:text-blue-600"
-                                }`}
-                                onClick={() => setIsOpen(false)}
-                              >
-                                {subItem.name}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      ) : (
-                        <Link
-                          href={item.href}
-                          className={`block py-2 text-lg font-medium ${
-                            isActive(item.href)
-                              ? "text-blue-600"
-                              : "text-gray-900 hover:text-blue-600"
-                          }`}
-                          onClick={() => setIsOpen(false)}
-                        >
-                          {item.name}
-                        </Link>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </SheetContent>
-            </Sheet>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {isOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+              {navigation.map((item) => (
+                <div key={item.name}>
+                  {item.submenu ? (
+                    <div>
+                      <div className="text-gray-900 font-medium px-3 py-2 text-base">
+                        {item.name}
+                      </div>
+                      <div className="ml-4 space-y-1">
+                        {item.submenu.map((subItem) => (
+                          <Link
+                            key={subItem.name}
+                            href={subItem.href}
+                            className={`block px-3 py-2 text-base ${
+                              isActive(subItem.href)
+                                ? "text-blue-600 font-medium bg-blue-50"
+                                : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                            }`}
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {subItem.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`block px-3 py-2 text-base font-medium ${
+                        isActive(item.href)
+                          ? "text-blue-600 bg-blue-50"
+                          : "text-gray-900 hover:text-blue-600 hover:bg-gray-50"
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Waves, Youtube, Linkedin, Instagram } from "lucide-react";
 
@@ -18,13 +20,31 @@ export default function Footer() {
               Leading marine nano-fiber technology pioneer, committed to sustainable ocean solutions and innovative biotechnology research.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a 
+                href="https://youtube.com/@marinebiogroup" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+                aria-label="YouTube"
+              >
                 <Youtube className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a 
+                href="https://linkedin.com/company/marinebiogroup" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+                aria-label="LinkedIn"
+              >
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a 
+                href="https://instagram.com/marinebiogroup" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+                aria-label="Instagram"
+              >
                 <Instagram className="h-5 w-5" />
               </a>
             </div>
@@ -35,23 +55,43 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/about" className="text-gray-300 hover:text-white transition-colors">
+                <Link 
+                  href="/about" 
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/products" className="text-gray-300 hover:text-white transition-colors">
+                <Link 
+                  href="/products" 
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   Products
                 </Link>
               </li>
               <li>
-                <Link href="/research" className="text-gray-300 hover:text-white transition-colors">
+                <Link 
+                  href="/research" 
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   Research
                 </Link>
               </li>
               <li>
-                <Link href="/news" className="text-gray-300 hover:text-white transition-colors">
+                <Link 
+                  href="/news" 
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
                   News
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href="/contact" 
+                  className="text-gray-300 hover:text-white transition-colors"
+                >
+                  Contact
                 </Link>
               </li>
             </ul>
@@ -61,10 +101,24 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <div className="text-gray-300 space-y-2">
-              <p>123 Marine Drive</p>
-              <p>Ocean City, OC 12345</p>
-              <p>Phone: (555) 123-4567</p>
-              <p>Email: info@marinebiogroup.com</p>
+              <p>Marine Technology Center</p>
+              <p>Busan, South Korea</p>
+              <p>
+                <a 
+                  href="tel:+82-51-123-4567" 
+                  className="hover:text-white transition-colors"
+                >
+                  Phone: +82-51-123-4567
+                </a>
+              </p>
+              <p>
+                <a 
+                  href="mailto:info@marinebiogroup.com" 
+                  className="hover:text-white transition-colors"
+                >
+                  Email: info@marinebiogroup.com
+                </a>
+              </p>
             </div>
           </div>
         </div>

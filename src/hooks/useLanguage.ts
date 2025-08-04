@@ -1,3 +1,5 @@
+"use client"; // 이 줄 추가!
+
 import { useState } from 'react';
 
 export type Language = 'ko' | 'eng';

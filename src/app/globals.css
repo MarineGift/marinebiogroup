@@ -1,3 +1,5 @@
+/* react-day-picker 스타일 */
+@import "react-day-picker/dist/style.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

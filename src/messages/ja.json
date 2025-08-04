@@ -1,0 +1,13 @@
+{
+  "navigation": {
+    "home": "ホーム",
+    "about": "紹介",
+    "products": "製品",
+    "contact": "お問い合わせ"
+  },
+  "home": {
+    "title": "マリンバイオグループ",
+    "subtitle": "革新的な海洋ナノファイバー技術",
+    "description": "持続可能な美容とライフスタイル製品"
+  }
+}

@@ -1,0 +1,1 @@
+"use strict";exports.id=175,exports.ids=[175],exports.modules={4175:e=>{e.exports=JSON.parse('{"welcome":"Welcome to MarinebioGroup"}')}};

@@ -1,0 +1,1 @@
+"use strict";exports.id=430,exports.ids=[430],exports.modules={4430:e=>{e.exports=JSON.parse('{"welcome":"마린바이오그룹 방문을 환영합니다"}')}};

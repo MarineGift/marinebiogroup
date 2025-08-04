@@ -3,6 +3,6 @@
   "/page": "app/page.js",
   "/[locale]/login/page": "app/[locale]/login/page.js",
   "/[locale]/page": "app/[locale]/page.js",
-  "/[locale]/services/page": "app/[locale]/services/page.js",
-  "/[locale]/gallery/page": "app/[locale]/gallery/page.js"
+  "/[locale]/gallery/page": "app/[locale]/gallery/page.js",
+  "/[locale]/services/page": "app/[locale]/services/page.js"
 }

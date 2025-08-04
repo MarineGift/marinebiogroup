@@ -1,6 +1,9 @@
-// src/app/layout.tsx
+# 기존 파일 삭제하고 새로 생성
+rm src/app/layout.tsx
+
+# 새 파일 생성
+cat > src/app/layout.tsx << 'EOF'
 import { Toaster } from 'react-hot-toast';
-import { LanguageProvider } from '@/hooks/useLanguage';
 
 export default function RootLayout({
   children,
@@ -10,9 +13,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+        {children}
         <Toaster
           position="top-right"
           toastOptions={{
@@ -27,3 +28,4 @@ export default function RootLayout({
     </html>
   );
 }
+EOF

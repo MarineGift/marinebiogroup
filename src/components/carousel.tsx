@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// import { useQuery } from '@tanstack/react-query'; // 제거
+import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
@@ -24,46 +24,6 @@ interface CarouselProps {
   className?: string;
 }
 
-// Mock 데이터 - 실제 API 연결 전까지 사용
-const mockCarousels: CarouselItem[] = [
-  {
-    id: '1',
-    title: 'Marine Nano-Fiber Technology',
-    subtitle: 'Innovation',
-    description: 'Leading the future of marine biotechnology with advanced nano-fiber solutions',
-    imageUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
-    linkUrl: '/products',
-    buttonText: 'Learn More',
-    order: 1,
-    isActive: true,
-    language: 'eng'
-  },
-  {
-    id: '2',
-    title: 'Sustainable Ocean Research',
-    subtitle: 'Research',
-    description: 'Pioneering sustainable solutions for marine environmental challenges',
-    imageUrl: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
-    linkUrl: '/research',
-    buttonText: 'Explore Research',
-    order: 2,
-    isActive: true,
-    language: 'eng'
-  },
-  {
-    id: '3',
-    title: 'Global Partnerships',
-    subtitle: 'Collaboration',
-    description: 'Building partnerships worldwide to advance marine biotechnology',
-    imageUrl: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
-    linkUrl: '/about',
-    buttonText: 'Our Partners',
-    order: 3,
-    isActive: true,
-    language: 'eng'
-  }
-];
-
 export default function Carousel({ 
   language = 'eng', 
   autoplay = true, 
@@ -72,33 +32,13 @@ export default function Carousel({
 }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoplay);
-  const [carousels, setCarousels] = useState<CarouselItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // 데이터 로딩 함수 - 나중에 실제 API로 교체 가능
-  useEffect(() => {
-    const loadCarousels = async () => {
-      setIsLoading(true);
-      try {
-        // 실제 API 호출을 원한다면 아래 주석을 해제하고 mock 데이터 부분을 주석 처리
-        // const response = await fetch(`/api/carousels/active?language=${language}`);
-        // const data = await response.json();
-        // setCarousels(data);
-        
-        // 현재는 mock 데이터 사용
-        setTimeout(() => {
-          setCarousels(mockCarousels.filter(item => item.language === language || language === 'eng'));
-          setIsLoading(false);
-        }, 500); // 로딩 시뮬레이션
-      } catch (error) {
-        console.error('Failed to load carousels:', error);
-        setCarousels(mockCarousels); // 에러 시 mock 데이터 사용
-        setIsLoading(false);
-      }
-    };
-
-    loadCarousels();
-  }, [language]);
+  const { data: carousels = [], isLoading } = useQuery({
+    queryKey: ['/api/carousels/active', language],
+    queryFn: () => 
+      fetch(`/api/carousels/active?language=${language}`)
+        .then(res => res.json()),
+  });
 
   // Auto-play functionality
   useEffect(() => {

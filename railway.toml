@@ -1,5 +1,6 @@
 [build]
 builder = "NIXPACKS"
+# install 단계를 건너뛰고 바로 빌드로 이동
 buildCommand = "cd src && npm ci && npm run build"
 
 [deploy]
@@ -7,6 +8,11 @@ startCommand = "cd src && npm start"
 restartPolicyType = "ON_FAILURE"
 healthcheckPath = "/"
 healthcheckTimeout = 300
+
+# Nixpacks 설정을 강제로 조정
+[build.env]
+NIXPACKS_NO_DEFAULT_INSTALL = "true"
+NIXPACKS_NODE_VERSION = "18"
 
 [environments.production]
 NODE_ENV = "production"

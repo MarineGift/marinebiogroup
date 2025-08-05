@@ -1,0 +1,17 @@
+[phases.setup]
+providers = ["nodejs"]
+
+[phases.install]
+# install 단계를 완전히 비활성화
+cmds = ["echo 'Skipping root install, building in src/'"]
+
+[phases.build]
+# src 폴더에서만 빌드
+cmds = ["cd src && npm ci && npm run build"]
+
+[phases.start]
+# src 폴더에서 시작
+cmd = "cd src && npm start"
+
+[variables]
+NODE_ENV = "production"

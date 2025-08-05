@@ -1,0 +1,19 @@
+# 빌드에서 제외할 파일들
+node_modules
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+
+# Vite 관련 파일들 (루트에 있으면 안됨)
+package.json
+package-lock.json
+vite.config.*
+index.html
+dist
+
+# 개발 파일들
+*.log
+.env
+.DS_Store

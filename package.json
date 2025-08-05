@@ -1,13 +1,36 @@
 {
   "name": "marinebiogroup-website",
   "version": "1.0.0",
-  "description": "MarineBioGroup - Marine nano-fiber technology website",
+  "description": "MarineBioGroup - Advanced Marine Nano-Fiber Technology & Biotechnology Solutions",
   "private": true,
+  "keywords": [
+    "marine biotechnology",
+    "nano-fiber technology",
+    "bioengineering",
+    "sustainable materials",
+    "marine research",
+    "biotechnology innovation"
+  ],
+  "author": {
+    "name": "MarineBioGroup",
+    "email": "contact@marinebiogroup.com",
+    "url": "https://marinebiogroup.com"
+  },
+  "homepage": "https://marinebiogroup.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marinebiogroup/website"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next out",
+    "export": "next export",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
     "next": "15.4.5",
@@ -32,7 +55,13 @@
     "@radix-ui/react-toast": "1.2.2",
     "@radix-ui/react-tooltip": "1.2.7",
     "jsonwebtoken": "9.0.2",
-    "@types/jsonwebtoken": "9.0.7"
+    "@types/jsonwebtoken": "9.0.7",
+    "nodemailer": "6.9.16",
+    "@types/nodemailer": "6.4.19",
+    "react-intersection-observer": "9.13.1",
+    "embla-carousel-react": "8.5.1",
+    "react-countup": "6.5.3",
+    "react-parallax-tilt": "1.7.234"
   },
   "devDependencies": {
     "typescript": "5.8.3",
@@ -43,9 +72,43 @@
     "autoprefixer": "10.4.21",
     "postcss": "8.5.6",
     "eslint": "8.57.0",
-    "eslint-config-next": "15.4.5"
+    "eslint-config-next": "15.4.5",
+    "@next/bundle-analyzer": "15.4.5",
+    "cross-env": "7.0.3",
+    "@tailwindcss/typography": "0.5.15",
+    "@tailwindcss/forms": "0.5.9",
+    "@tailwindcss/aspect-ratio": "0.4.2",
+    "prettier": "3.3.3",
+    "prettier-plugin-tailwindcss": "0.6.8"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

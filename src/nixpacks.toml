@@ -4,11 +4,8 @@ providers = ["nodejs"]
 [phases.install]
 cmds = ["echo 'Skipping root install'"]
 
-[phases.build]  
+[phases.build]
 cmds = ["cd src && npm ci && npm run build"]
 
 [phases.start]
 cmd = "cd src && npm start"
-
-[variables]
-NODE_ENV = "production"

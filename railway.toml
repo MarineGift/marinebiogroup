@@ -1,0 +1,12 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "cd src && npm ci && npm run build"
+
+[deploy]
+startCommand = "cd src && npm start"
+restartPolicyType = "ON_FAILURE"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+
+[environments.production]
+NODE_ENV = "production"

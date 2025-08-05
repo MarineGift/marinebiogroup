@@ -1,0 +1,9 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+restartPolicyType = "ON_FAILURE"
+healthcheckPath = "/"
+
+[environments.production]  
+NODE_ENV = "production"

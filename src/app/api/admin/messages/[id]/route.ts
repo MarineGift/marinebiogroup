@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { storage } from '@/server/storage'
+import { supabase } from '@/lib/supabase'
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const messageId = params.id
-    await storage.deleteMessage(messageId)
+    const { error } = await supabase.from('contacts').delete().eq('id', messageId)
     
-    return NextResponse.json({ success: true })
+    if (error) {
+      return NextResponse.json({ error: 'Failed to delete message' }, { status: 500 })
+    }
+
+    return NextResponse.json({ message: 'Message deleted successfully' })
   } catch (error) {
-    console.error('Error deleting message:', error)
-    return NextResponse.json(
-      { error: 'Failed to delete message' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to delete message' }, { status: 500 })
   }
 }

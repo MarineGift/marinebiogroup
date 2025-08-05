@@ -24,31 +24,38 @@ export default function Navbar() {
   const pathname = usePathname()
 
   return (
-    <nav className="bg-white/95 backdrop-blur-sm border-b border-marine/20 sticky top-0 z-50">
+    <nav className="bg-white/95 backdrop-blur-sm border-b border-blue-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 marine-gradient rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">M</span>
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                <span className="text-white font-bold text-lg">M</span>
               </div>
-              <span className="text-xl font-bold text-marine">MarineBioGroup</span>
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold text-blue-900 group-hover:text-blue-700 transition-colors">
+                  MarineBioGroup
+                </span>
+                <span className="text-xs text-blue-600 font-medium -mt-1">
+                  Marine Nano-Fiber Technology
+                </span>
+              </div>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+          <div className="hidden lg:block">
+            <div className="ml-10 flex items-baseline space-x-1">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105",
                     pathname === item.href
-                      ? "text-marine bg-ocean-light"
-                      : "text-gray-700 hover:text-marine hover:bg-ocean-light/50"
+                      ? "text-white bg-blue-600 shadow-md"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                   )}
                 >
                   {item.name}
@@ -57,11 +64,21 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* CTA Button - Desktop */}
+          <div className="hidden lg:block">
+            <Link
+              href="/contact"
+              className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              Get Started
+            </Link>
+          </div>
+
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-marine hover:bg-ocean-light focus:outline-none focus:ring-2 focus:ring-inset focus:ring-marine"
+              className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -71,23 +88,48 @@ export default function Navbar() {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-marine/20">
+        <div className="lg:hidden border-t border-blue-200 bg-white/98 backdrop-blur-sm">
+          <div className="px-4 pt-4 pb-6 space-y-2">
+            {/* Mobile Logo */}
+            <div className="pb-4 border-b border-blue-100">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">M</span>
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-blue-900">MarineBioGroup</div>
+                  <div className="text-xs text-blue-600">Marine Nano-Fiber Technology</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Mobile Menu Items */}
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "block px-3 py-2 rounded-md text-base font-medium transition-colors",
+                  "block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200",
                   pathname === item.href
-                    ? "text-marine bg-ocean-light"
-                    : "text-gray-700 hover:text-marine hover:bg-ocean-light/50"
+                    ? "text-white bg-blue-600 shadow-md"
+                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                 )}
                 onClick={() => setIsOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
+            
+            {/* Mobile CTA */}
+            <div className="pt-4">
+              <Link
+                href="/contact"
+                className="block w-full text-center bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg"
+                onClick={() => setIsOpen(false)}
+              >
+                Get Started
+              </Link>
+            </div>
           </div>
         </div>
       )}

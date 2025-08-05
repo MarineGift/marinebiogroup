@@ -1,411 +1,234 @@
-// src/lib/auth.ts - Supabase 인증 헬퍼 함수들
-import { supabase } from './supabase'
-import { User, Session } from '@supabase/supabase-js'
+// src/lib/supabase.ts
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-export interface UserProfile {
-  id: string
-  email: string
-  display_name?: string
-  avatar_url?: string
-  bio?: string
-  role: 'user' | 'admin' | 'manager'
-  is_active: boolean
-  last_seen?: string
-  created_at: string
-  updated_at: string
-}
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
-export interface AuthResponse {
-  success: boolean
-  error?: string
-  user?: User
-  session?: Session
-}
+// Supabase 클라이언트가 사용 가능한지 확인
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
 
-// 인증 관련 헬퍼 함수들
-export const auth = {
-  // 로그인
-  async signIn(email: string, password: string): Promise<AuthResponse> {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) {
-        return { success: false, error: error.message }
-      }
-
-      return {
-        success: true,
-        user: data.user,
-        session: data.session,
-      }
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '로그인 중 오류가 발생했습니다.',
-      }
-    }
+// 더미 클라이언트 (환경 변수가 없을 때 사용)
+const dummyClient = {
+  from: () => ({
+    select: () => Promise.resolve({ data: [], error: new Error('Supabase not configured') }),
+    insert: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+    update: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+    delete: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+    upsert: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+  }),
+  auth: {
+    signInWithPassword: () => Promise.resolve({ data: { user: null, session: null }, error: new Error('Supabase not configured') }),
+    signUp: () => Promise.resolve({ data: { user: null, session: null }, error: new Error('Supabase not configured') }),
+    signOut: () => Promise.resolve({ error: new Error('Supabase not configured') }),
+    getUser: () => Promise.resolve({ data: { user: null }, error: new Error('Supabase not configured') }),
+    getSession: () => Promise.resolve({ data: { session: null }, error: new Error('Supabase not configured') }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    resetPasswordForEmail: () => Promise.resolve({ error: new Error('Supabase not configured') }),
   },
+  storage: {
+    from: () => ({
+      upload: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+      download: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+      remove: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+    }),
+  },
+} as any
 
-  // 회원가입
-  async signUp(email: string, password: string, displayName?: string): Promise<AuthResponse> {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            display_name: displayName || email.split('@')[0],
-          }
+// 실제 Supabase 클라이언트 또는 더미 클라이언트 생성
+export const supabase: SupabaseClient = isSupabaseConfigured 
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      },
+      realtime: {
+        params: {
+          eventsPerSecond: 10
         }
-      })
-
-      if (error) {
-        return { success: false, error: error.message }
       }
-
-      return {
-        success: true,
-        user: data.user,
-        session: data.session,
-      }
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '회원가입 중 오류가 발생했습니다.',
-      }
-    }
-  },
-
-  // 로그아웃
-  async signOut(): Promise<{ success: boolean; error?: string }> {
-    try {
-      const { error } = await supabase.auth.signOut()
-      
-      if (error) {
-        return { success: false, error: error.message }
-      }
-
-      return { success: true }
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '로그아웃 중 오류가 발생했습니다.',
-      }
-    }
-  },
-
-  // 비밀번호 재설정
-  async resetPassword(email: string): Promise<{ success: boolean; error?: string }> {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      })
-
-      if (error) {
-        return { success: false, error: error.message }
-      }
-
-      return { success: true }
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '비밀번호 재설정 중 오류가 발생했습니다.',
-      }
-    }
-  },
-
-  // 현재 사용자 가져오기
-  async getCurrentUser(): Promise<User | null> {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      return user
-    } catch (error) {
-      console.error('사용자 정보 조회 실패:', error)
-      return null
-    }
-  },
-
-  // 현재 세션 가져오기
-  async getCurrentSession(): Promise<Session | null> {
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      return session
-    } catch (error) {
-      console.error('세션 정보 조회 실패:', error)
-      return null
-    }
-  },
-
-  // 사용자 프로필 가져오기
-  async getUserProfile(userId?: string): Promise<UserProfile | null> {
-    try {
-      const targetUserId = userId || (await this.getCurrentUser())?.id
-      
-      if (!targetUserId) {
-        return null
-      }
-
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', targetUserId)
-        .single()
-
-      if (error) {
-        console.error('프로필 조회 실패:', error)
-        return null
-      }
-
-      return data
-    } catch (error) {
-      console.error('프로필 조회 중 오류:', error)
-      return null
-    }
-  },
-
-  // 사용자 프로필 업데이트
-  async updateUserProfile(updates: Partial<Omit<UserProfile, 'id' | 'email' | 'created_at'>>): Promise<{ success: boolean; error?: string }> {
-    try {
-      const user = await this.getCurrentUser()
-      
-      if (!user) {
-        return { success: false, error: '로그인이 필요합니다.' }
-      }
-
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id)
-
-      if (error) {
-        return { success: false, error: error.message }
-      }
-
-      return { success: true }
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '프로필 업데이트 중 오류가 발생했습니다.',
-      }
-    }
-  },
-
-  // 인증 상태 변경 리스너
-  onAuthStateChange(callback: (event: string, session: Session | null) => void) {
-    return supabase.auth.onAuthStateChange(callback)
-  },
-
-  // 권한 확인
-  async hasRole(requiredRole: UserProfile['role']): Promise<boolean> {
-    try {
-      const profile = await this.getUserProfile()
-      
-      if (!profile) return false
-
-      const roleHierarchy = {
-        'user': 1,
-        'manager': 2,
-        'admin': 3,
-      }
-
-      return roleHierarchy[profile.role] >= roleHierarchy[requiredRole]
-    } catch (error) {
-      console.error('권한 확인 실패:', error)
-      return false
-    }
-  },
-
-  // 관리자 여부 확인
-  async isAdmin(): Promise<boolean> {
-    return this.hasRole('admin')
-  },
-
-  // 매니저 이상 권한 확인
-  async isManagerOrAbove(): Promise<boolean> {
-    return this.hasRole('manager')
-  },
-}
-
-// --------------------------------------------------
-
-// src/hooks/useAuth.ts - React Hook
-import { useState, useEffect } from 'react'
-import { User, Session } from '@supabase/supabase-js'
-import { auth, UserProfile } from '@/lib/auth'
-
-interface UseAuthReturn {
-  user: User | null
-  profile: UserProfile | null
-  session: Session | null
-  loading: boolean
-  isAdmin: boolean
-  isManager: boolean
-  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  signUp: (email: string, password: string, displayName?: string) => Promise<{ success: boolean; error?: string }>
-  signOut: () => Promise<{ success: boolean; error?: string }>
-  resetPassword: (email: string) => Promise<{ success: boolean; error?: string }>
-  updateProfile: (updates: Partial<UserProfile>) => Promise<{ success: boolean; error?: string }>
-}
-
-export function useAuth(): UseAuthReturn {
-  const [user, setUser] = useState<User | null>(null)
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // 초기 세션 확인
-    const initializeAuth = async () => {
-      try {
-        const session = await auth.getCurrentSession()
-        const user = await auth.getCurrentUser()
-        
-        setSession(session)
-        setUser(user)
-
-        if (user) {
-          const profile = await auth.getUserProfile(user.id)
-          setProfile(profile)
-        }
-      } catch (error) {
-        console.error('인증 초기화 실패:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    initializeAuth()
-
-    // 인증 상태 변경 리스너
-    const { data: { subscription } } = auth.onAuthStateChange(async (event, session) => {
-      setSession(session)
-      setUser(session?.user || null)
-
-      if (session?.user) {
-        const profile = await auth.getUserProfile(session.user.id)
-        setProfile(profile)
-      } else {
-        setProfile(null)
-      }
-
-      setLoading(false)
     })
+  : dummyClient
 
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
-
-  const signIn = async (email: string, password: string) => {
-    setLoading(true)
-    const result = await auth.signIn(email, password)
-    setLoading(false)
-    return result
+// 환경 변수 체크 함수
+export function checkSupabaseConfig(): { configured: boolean; missing: string[] } {
+  const missing: string[] = []
+  
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    missing.push('NEXT_PUBLIC_SUPABASE_URL')
   }
-
-  const signUp = async (email: string, password: string, displayName?: string) => {
-    setLoading(true)
-    const result = await auth.signUp(email, password, displayName)
-    setLoading(false)
-    return result
+  
+  if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    missing.push('NEXT_PUBLIC_SUPABASE_ANON_KEY')
   }
-
-  const signOut = async () => {
-    setLoading(true)
-    const result = await auth.signOut()
-    setLoading(false)
-    return result
-  }
-
-  const resetPassword = async (email: string) => {
-    return auth.resetPassword(email)
-  }
-
-  const updateProfile = async (updates: Partial<UserProfile>) => {
-    const result = await auth.updateUserProfile(updates)
-    
-    if (result.success && user) {
-      // 프로필 업데이트 성공 시 로컬 상태 갱신
-      const updatedProfile = await auth.getUserProfile(user.id)
-      setProfile(updatedProfile)
-    }
-    
-    return result
-  }
-
+  
   return {
-    user,
-    profile,
-    session,
-    loading,
-    isAdmin: profile?.role === 'admin',
-    isManager: profile?.role === 'manager' || profile?.role === 'admin',
-    signIn,
-    signUp,
-    signOut,
-    resetPassword,
-    updateProfile,
+    configured: missing.length === 0,
+    missing
   }
 }
 
-// --------------------------------------------------
-
-// src/components/ProtectedRoute.tsx - 권한 기반 라우트 보호
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
-
-interface ProtectedRouteProps {
-  children: React.ReactNode
-  requiredRole?: 'user' | 'manager' | 'admin'
-  redirectTo?: string
+// 개발 환경에서 설정 상태 로그
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  const config = checkSupabaseConfig()
+  if (!config.configured) {
+    console.warn('⚠️ Supabase 환경 변수가 설정되지 않았습니다:', config.missing)
+    console.warn('샘플 데이터를 사용합니다. 실제 기능을 위해서는 다음 환경 변수를 설정해주세요:')
+    config.missing.forEach(key => console.warn(`- ${key}`))
+  } else {
+    console.log('✅ Supabase 설정이 완료되었습니다.')
+  }
 }
 
-export function ProtectedRoute({ 
-  children, 
-  requiredRole = 'user', 
-  redirectTo = '/auth/login' 
-}: ProtectedRouteProps) {
-  const { user, profile, loading } = useAuth()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.push(redirectTo)
-        return
-      }
-
-      if (profile && requiredRole) {
-        const roleHierarchy = { 'user': 1, 'manager': 2, 'admin': 3 }
-        const userLevel = roleHierarchy[profile.role]
-        const requiredLevel = roleHierarchy[requiredRole]
-
-        if (userLevel < requiredLevel) {
-          router.push('/unauthorized')
-          return
-        }
-      }
+// 안전한 Supabase 작업을 위한 헬퍼 함수들
+export const safeSupabaseOperation = {
+  // 안전한 데이터 조회
+  async select<T = any>(table: string, query: string = '*'): Promise<{ data: T[] | null; error: Error | null }> {
+    if (!isSupabaseConfigured) {
+      console.warn(`Supabase 미설정: ${table} 테이블 조회 시도`)
+      return { data: [], error: new Error('Supabase not configured') }
     }
-  }, [user, profile, loading, requiredRole, redirectTo, router])
+    
+    try {
+      const { data, error } = await supabase.from(table).select(query)
+      return { data: data as T[], error }
+    } catch (error) {
+      return { data: null, error: error as Error }
+    }
+  },
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    )
+  // 안전한 데이터 삽입
+  async insert<T = any>(table: string, values: any): Promise<{ data: T | null; error: Error | null }> {
+    if (!isSupabaseConfigured) {
+      console.warn(`Supabase 미설정: ${table} 테이블 삽입 시도`)
+      return { data: null, error: new Error('Supabase not configured') }
+    }
+    
+    try {
+      const { data, error } = await supabase.from(table).insert(values).select()
+      return { data: data?.[0] as T, error }
+    } catch (error) {
+      return { data: null, error: error as Error }
+    }
+  },
+
+  // 안전한 데이터 업데이트
+  async update<T = any>(table: string, values: any, condition: any): Promise<{ data: T | null; error: Error | null }> {
+    if (!isSupabaseConfigured) {
+      console.warn(`Supabase 미설정: ${table} 테이블 업데이트 시도`)
+      return { data: null, error: new Error('Supabase not configured') }
+    }
+    
+    try {
+      const { data, error } = await supabase.from(table).update(values).match(condition).select()
+      return { data: data?.[0] as T, error }
+    } catch (error) {
+      return { data: null, error: error as Error }
+    }
+  },
+
+  // 안전한 데이터 삭제
+  async delete(table: string, condition: any): Promise<{ error: Error | null }> {
+    if (!isSupabaseConfigured) {
+      console.warn(`Supabase 미설정: ${table} 테이블 삭제 시도`)
+      return { error: new Error('Supabase not configured') }
+    }
+    
+    try {
+      const { error } = await supabase.from(table).delete().match(condition)
+      return { error }
+    } catch (error) {
+      return { error: error as Error }
+    }
   }
-
-  if (!user || (profile && requiredRole && !profile)) {
-    return null
-  }
-
-  return <>{children}</>
 }
+
+// 개발용 샘플 데이터 생성 함수
+export function generateSampleData() {
+  return {
+    inquiries: [
+      {
+        id: '1',
+        name: '김철수',
+        email: 'kim@example.com',
+        phone: '010-1234-5678',
+        subject: '제품 문의',
+        message: '마린기프트 비누에 대해 자세히 알고 싶습니다. 성분과 효능에 대해 설명해주세요.',
+        status: 'pending',
+        created_at: '2024-01-15T10:30:00Z',
+        updated_at: '2024-01-15T10:30:00Z',
+        category: '제품문의',
+        priority: 'high'
+      },
+      {
+        id: '2',
+        name: '이영희',
+        email: 'lee@example.com',
+        phone: '010-9876-5432',
+        subject: '배송 관련 문의',
+        message: '주문한 상품이 언제 도착하나요? 배송 추적이 안되고 있어서 문의드립니다.',
+        status: 'answered',
+        created_at: '2024-01-14T14:20:00Z',
+        updated_at: '2024-01-14T14:20:00Z',
+        category: '배송문의',
+        priority: 'medium',
+        replied_at: '2024-01-14T16:30:00Z',
+        reply_message: '안녕하세요. 주문하신 상품은 내일(1월 15일) 도착 예정입니다. 배송 추적번호는 별도로 문자로 발송드리겠습니다.'
+      },
+      {
+        id: '3',
+        name: '박민수',
+        email: 'park@example.com',
+        phone: '010-5555-1234',
+        subject: '환불 요청',
+        message: '구매한 제품에 불만이 있어 환불을 요청합니다. 절차를 안내해주세요.',
+        status: 'pending',
+        created_at: '2024-01-13T09:15:00Z',
+        updated_at: '2024-01-13T09:15:00Z',
+        category: '환불문의',
+        priority: 'high'
+      },
+      {
+        id: '4',
+        name: '정수진',
+        email: 'jung@example.com',
+        phone: '010-7777-8888',
+        subject: '사용법 문의',
+        message: '마린크림바 사용법을 자세히 알려주세요. 얼마나 자주 사용해야 하나요?',
+        status: 'closed',
+        created_at: '2024-01-12T16:45:00Z',
+        updated_at: '2024-01-12T16:45:00Z',
+        category: '사용법문의',
+        priority: 'low',
+        replied_at: '2024-01-12T18:00:00Z',
+        reply_message: '마린크림바는 하루 1-2회 사용하시면 됩니다. 아침, 저녁으로 세안 후 사용하시길 권장드립니다.'
+      },
+      {
+        id: '5',
+        name: '최동욱',
+        email: 'choi@example.com',
+        phone: '010-3333-9999',
+        subject: '대량 구매 문의',
+        message: '사업용으로 대량 구매를 하고 싶습니다. 할인 혜택이 있는지 문의드립니다.',
+        status: 'pending',
+        created_at: '2024-01-11T11:30:00Z',
+        updated_at: '2024-01-11T11:30:00Z',
+        category: '대량구매',
+        priority: 'medium'
+      }
+    ],
+    userProfiles: [
+      {
+        id: 'admin-001',
+        email: 'admin@kictgroup.com',
+        display_name: '관리자',
+        role: 'admin',
+        is_active: true,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      }
+    ]
+  }
+}
+
+export default supabase

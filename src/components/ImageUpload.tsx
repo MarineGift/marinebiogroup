@@ -1,131 +1,240 @@
-"use client"
-
-import React, { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-// import toast from 'react-hot-toast'; // 주석 처리
+import { useToast } from "@/hooks/use-toast";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
-// import { motion } from "framer-motion"; // 주석 처리
+import { motion } from "framer-motion";
 
-// 간단한 toast 대체 함수
-const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-  console.log(`${type}: ${message}`);
-  // 실제로는 alert 또는 다른 알림 방식 사용 가능
-};
+interface ImageUploadProps {
+  onImageUpload: (imageUrl: string) => void;
+  category: "gallery" | "news" | "blog" | "products" | "common";
+  currentImage?: string;
+  className?: string;
+}
 
-export default function ImageUpload() {
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+export default function ImageUpload({ 
+  onImageUpload, 
+  category, 
+  currentImage,
+  className = "" 
+}: ImageUploadProps) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setSelectedFiles(files);
-  };
-
-  const handleUpload = async () => {
-    if (selectedFiles.length === 0) {
-      showToast("Please select files to upload", 'error');
+  const handleFileSelect = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file",
+        variant: "destructive",
+      });
       return;
     }
 
-    setUploading(true);
-    setProgress(0);
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    await uploadImage(file);
+  };
+
+  const uploadImage = async (file: File) => {
+    setIsUploading(true);
+    setUploadProgress(0);
 
     try {
-      // 업로드 시뮬레이션
-      for (let i = 0; i <= 100; i += 10) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        setProgress(i);
-      }
+      // Simulate upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 100);
+
+      // Create local file URL for immediate use
+      const localImageUrl = URL.createObjectURL(file);
       
-      showToast("Images uploaded successfully!", 'success');
-      setSelectedFiles([]);
+      // Complete progress
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      
+      setTimeout(() => {
+        // Use the local blob URL for immediate display
+        onImageUpload(localImageUrl);
+        setIsUploading(false);
+        setUploadProgress(0);
+        
+        toast({
+          title: "Local file selected",
+          description: `${file.name} ready for use in ${category} section`,
+        });
+      }, 500);
+
     } catch (error) {
-      showToast("Upload failed. Please try again.", 'error');
-    } finally {
-      setUploading(false);
-      setProgress(0);
+      console.error('Upload error:', error);
+      setIsUploading(false);
+      setUploadProgress(0);
+      
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload image. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
-  const removeFile = (index: number) => {
-    setSelectedFiles(files => files.filter((_, i) => i !== index));
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files[0]) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+  };
+
+  const triggerFileSelect = () => {
+    fileInputRef.current?.click();
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-sm">
-      <div className="space-y-4">
-        <div className="text-center">
-          <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-semibold text-gray-900">
-            Upload Images
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            PNG, JPG, GIF up to 10MB
-          </p>
+    <div className={`space-y-4 ${className}`}>
+      {/* Current Image Preview */}
+      {currentImage && (
+        <div className="relative">
+          <img
+            src={currentImage}
+            alt="Current"
+            className="w-full h-32 object-cover rounded-lg border"
+          />
+          <Button
+            variant="destructive"
+            size="sm"
+            className="absolute top-2 right-2"
+            onClick={() => onImageUpload('')}
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
+      )}
 
-        <div className="mt-4">
-          <label htmlFor="file-upload" className="cursor-pointer">
-            <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
-              <div className="space-y-1 text-center">
-                <Upload className="mx-auto h-8 w-8 text-gray-400" />
-                <div className="flex text-sm text-gray-600">
-                  <span className="relative cursor-pointer rounded-md font-medium text-primary hover:text-primary/80">
-                    Click to upload
-                  </span>
-                  <p className="pl-1">or drag and drop</p>
-                </div>
+      {/* Drag and Drop Upload Area */}
+      <motion.div
+        className={`
+          border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200
+          ${dragOver ? 'border-blue-500 bg-blue-50 scale-105' : 'border-gray-300 hover:border-blue-400'}
+          ${isUploading ? 'opacity-50 pointer-events-none' : 'cursor-pointer'}
+        `}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onClick={triggerFileSelect}
+        whileHover={{ scale: dragOver ? 1.05 : 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
+          className="hidden"
+        />
+        
+        {isUploading ? (
+          <div className="space-y-4">
+            <div className="mx-auto w-16 h-16 relative">
+              <div className="animate-spin border-4 border-blue-500 border-t-transparent rounded-full w-full h-full"></div>
+              <Upload className="absolute inset-0 m-auto h-6 w-6 text-blue-600" />
+            </div>
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-gray-700">
+                Processing image for {category} folder...
+              </div>
+              <Progress value={uploadProgress} className="max-w-xs mx-auto" />
+              <div className="text-xs text-gray-500">{uploadProgress}% complete</div>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex flex-col items-center">
+              <div className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+                dragOver ? 'bg-blue-100' : 'bg-gray-100'
+              }`}>
+                <Upload className={`h-8 w-8 transition-colors ${
+                  dragOver ? 'text-blue-600' : 'text-gray-400'
+                }`} />
+              </div>
+              <div className={`text-lg font-medium transition-colors ${
+                dragOver ? 'text-blue-700' : 'text-gray-900'
+              }`}>
+                {dragOver ? 'Drop your image here!' : 'Upload Image'}
+              </div>
+              <div className="text-sm text-gray-500 mt-1">
+                Drag and drop your image here, or click to browse
+              </div>
+              <div className="text-xs text-gray-400 mt-2">
+                Supports JPG, PNG, GIF up to 5MB • Target: {category}/ folder
               </div>
             </div>
-            <Input
-              id="file-upload"
-              type="file"
-              className="sr-only"
-              multiple
-              accept="image/*"
-              onChange={handleFileSelect}
-            />
-          </label>
+            
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="w-full transition-colors hover:bg-blue-50 hover:border-blue-400"
+            >
+              <ImageIcon className="h-4 w-4 mr-2" />
+              Choose File
+            </Button>
+          </div>
+        )}
+      </motion.div>
+
+      {/* URL Input Alternative */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
         </div>
-
-        {selectedFiles.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium">Selected files:</h4>
-            {selectedFiles.map((file, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-2 bg-gray-50 rounded"
-              >
-                <span className="text-sm truncate">{file.name}</span>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeFile(index)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {uploading && (
-          <div className="space-y-2">
-            <Progress value={progress} className="w-full" />
-            <p className="text-sm text-center text-gray-500">{progress}%</p>
-          </div>
-        )}
-
-        <Button
-          onClick={handleUpload}
-          disabled={uploading || selectedFiles.length === 0}
-          className="w-full"
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-2 text-gray-500">or enter URL</span>
+        </div>
+      </div>
+      
+      <div className="flex gap-2">
+        <Input
+          placeholder="https://example.com/image.jpg"
+          value={currentImage?.startsWith('blob:') ? '' : currentImage || ''}
+          onChange={(e) => onImageUpload(e.target.value)}
+          className="flex-1"
+        />
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={() => onImageUpload('')}
+          disabled={!currentImage}
         >
-          {uploading ? "Uploading..." : "Upload Images"}
+          <X className="h-4 w-4" />
         </Button>
       </div>
     </div>

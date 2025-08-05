@@ -1,19 +1,10 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import './globals.css';
+import type { ReactNode } from 'react';
 
-export const metadata: Metadata = {
-  title: 'Marine Bio Group',
-  description: 'Revolutionary Marine Nano-fiber Technology',
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>{children}</body>
     </html>
-  )
+  );
 }

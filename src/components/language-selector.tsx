@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useLanguage, LANGUAGE_NAMES } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,32 +6,31 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-type Language = 'ko' | 'eng';
-
-const LANGUAGE_NAMES = {
-  ko: '한국어',
-  eng: 'English'
-} as const;
+import { Globe } from "lucide-react";
 
 export default function LanguageSelector() {
-  const [language, setLanguage] = useState<Language>('ko');
+  const { language, setLanguage, getLanguageName } = useLanguage();
+
+  const languages = [
+    { code: 'eng', name: 'English' }
+  ];
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm">
-          {LANGUAGE_NAMES[language]}
+        <Button variant="ghost" size="sm" className="gap-2">
+          <Globe className="h-4 w-4" />
+          {getLanguageName()}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
+      <DropdownMenuContent align="end">
+        {languages.map((lang) => (
           <DropdownMenuItem
-            key={code}
-            onClick={() => setLanguage(code as Language)}
-            className={language === code ? 'bg-gray-100' : ''}
+            key={lang.code}
+            onClick={() => setLanguage(lang.code)}
+            className={language === lang.code ? "bg-blue-50" : ""}
           >
-            {name}
+            {lang.name}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

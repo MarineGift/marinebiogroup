@@ -11,15 +11,11 @@
     "marine research",
     "biotechnology innovation"
   ],
-  "author": {
-    "name": "MarineBioGroup",
-    "email": "contact@marinebiogroup.com",
-    "url": "https://marinebiogroup.com"
-  },
+  "author": "MarineBioGroup <contact@marinebiogroup.com> (https://marinebiogroup.com)",
   "homepage": "https://marinebiogroup.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/marinebiogroup/website"
+    "url": "git+https://github.com/marinebiogroup/website.git"
   },
   "scripts": {
     "dev": "next dev",
@@ -110,5 +106,10 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "main": "next.config.js",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marinebiogroup/website/issues"
   }
 }

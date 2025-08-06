@@ -1,7 +1,7 @@
 [build]
 builder = "NIXPACKS"
-# install 단계를 건너뛰고 바로 빌드로 이동
-buildCommand = "cd src && npm ci && npm run build"
+# install 단계를 건너뛰고 바로 빌드로 이동 - npm ci 대신 npm install 사용
+buildCommand = "cd src && npm install && npm run build"
 
 [deploy]
 startCommand = "cd src && npm start"

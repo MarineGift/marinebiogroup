@@ -6,8 +6,8 @@ providers = ["nodejs"]
 cmds = ["echo 'Skipping root install, building in src/'"]
 
 [phases.build]
-# src 폴더에서만 빌드
-cmds = ["cd src && npm ci && npm run build"]
+# src 폴더에서만 빌드 - npm ci 대신 npm install 사용
+cmds = ["cd src && npm install && npm run build"]
 
 [phases.start]
 # src 폴더에서 시작

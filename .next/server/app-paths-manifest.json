@@ -1,1 +1,23 @@
-{}
+{
+  "/api/admin/auth/route": "app/api/admin/auth/route.js",
+  "/api/admin/contacts/[id]/route": "app/api/admin/contacts/[id]/route.js",
+  "/api/admin/contacts/route": "app/api/admin/contacts/route.js",
+  "/api/admin/dashboard/route": "app/api/admin/dashboard/route.js",
+  "/api/admin/messages/[id]/route": "app/api/admin/messages/[id]/route.js",
+  "/api/admin/stats/route": "app/api/admin/stats/route.js",
+  "/api/admin/messages/route": "app/api/admin/messages/route.js",
+  "/api/contact/route": "app/api/contact/route.js",
+  "/api/newsletter/route": "app/api/newsletter/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/about/page": "app/about/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/page": "app/page.js",
+  "/products/page": "app/products/page.js",
+  "/technology/page": "app/technology/page.js",
+  "/admin/news/page": "app/admin/news/page.js",
+  "/admin/contacts/page": "app/admin/contacts/page.js",
+  "/admin/dashboard/page": "app/admin/dashboard/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/products/page": "app/admin/products/page.js",
+  "/admin/settings/page": "app/admin/settings/page.js"
+}

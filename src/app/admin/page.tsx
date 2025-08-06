@@ -1,8 +1,3 @@
-# admin 디렉토리로 이동
-cd admin
-
-# page.tsx 파일 생성
-cat > page.tsx << 'EOF'
 'use client'
 
 import { useState } from 'react'
@@ -22,9 +17,10 @@ export default function AdminLogin() {
 
     // 간단한 하드코딩된 로그인 체크
     if (username === 'admin' && password === '1111') {
-      // 성공 시 대시보드로 리다이렉트
-      alert('로그인 성공! 대시보드로 이동합니다.')
-      // router.push('/admin/dashboard')  // 나중에 대시보드 만들면 활성화
+      // 성공 시 알림
+      alert('로그인 성공!')
+      // TODO: 나중에 대시보드로 리다이렉트
+      // router.push('/admin/dashboard')
     } else {
       setError('잘못된 사용자명 또는 비밀번호입니다.')
     }
@@ -100,4 +96,3 @@ export default function AdminLogin() {
     </div>
   )
 }
-EOF

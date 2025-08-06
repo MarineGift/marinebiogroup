@@ -1,9 +1,15 @@
 [build]
 builder = "NIXPACKS"
+buildCommand = "npm install && npm run build"
 
 [deploy]
+startCommand = "npm start"
 restartPolicyType = "ON_FAILURE"
 healthcheckPath = "/"
+healthcheckTimeout = 300
 
-[environments.production]  
+[build.env]
+NIXPACKS_NODE_VERSION = "18"
+
+[environments.production]
 NODE_ENV = "production"

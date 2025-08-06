@@ -5,11 +5,6 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-  images: {
-    domains: ['localhost'],
-    unoptimized: true
-  },
-  output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
   },

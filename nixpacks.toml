@@ -2,16 +2,10 @@
 providers = ["nodejs"]
 
 [phases.install]
-# install 단계를 완전히 비활성화
-cmds = ["echo 'Skipping root install, building in src/'"]
+cmds = ["echo 'Skipping root install'"]
 
 [phases.build]
-# src 폴더에서만 빌드 - npm ci 대신 npm install 사용
-cmds = ["cd src && npm install && npm run build"]
+cmds = ["cd src && npm ci && npm run build"]
 
 [phases.start]
-# src 폴더에서 시작
 cmd = "cd src && npm start"
-
-[variables]
-NODE_ENV = "production"
